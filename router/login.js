@@ -11,17 +11,22 @@ router.use('/home_login', async (req, res, next) => {
 		// const name = query.name;
 		const exp = Date.now() + 5 * 60 * 1000;
 		const uid = uuid();
+		//生成token
 		const loginToken = jwt.sign({
 			exp,
 			data: {
 				uid
 			}
 		},tool.getPasswordKey())
-		res.cookie('_mis_token', loginToken, {
 
+		// 将生成的token写入cookie中，后期从cookies取出来校验
+		res.cookie('_mis_token', loginToken, {
+			domain: req.hostname,
+			httpOnly: false,
+			maxAge: 5 * 60 * 1000
 		})
 	}catch(e) {
-
+		res.send(`登录失败`)
 	}
 	// console.log("req",req)
 	res.send(`home_login`)
